@@ -6,7 +6,7 @@
 // and applies minimal Widget mutations.
 // ─────────────────────────────────────────────────────
 
-import { Box, Text, Widget, ProgressBar } from '@termuijs/widgets';
+import { Box, Text, Widget, ProgressBar, Grid } from '@termuijs/widgets';
 import type { Style, Color } from '@termuijs/core';
 import type { VNode, VElement, FC } from './vnode.js';
 import { isVElement, isVFragment, Fragment, flattenChildren } from './vnode.js';
@@ -105,6 +105,15 @@ function createIntrinsicWidget(tag: string, props: Record<string, any>, children
                 fillColor:   props.fillColor ? parseColorProp(props.fillColor) : undefined,
                 showLabel:   props.showLabel !== false,
                 labelFormat: props.labelFormat,
+            });
+        }
+
+        case 'grid': {
+            return new Grid({ ...style }, {
+                columns: props.columns ?? 12,
+                gap:     props.gap,
+                rowGap:  props.rowGap,
+                colGap:  props.colGap,
             });
         }
 

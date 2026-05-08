@@ -50,6 +50,10 @@ export type { StatusIndicatorOptions } from './data/StatusIndicator.js';
 export { BarChart } from './data/BarChart.js';
 export type { Bar, BarGroup, BarChartDirection, BarChartOptions } from './data/BarChart.js';
 
+// ── Layout Widgets ────────────────────────────────────
+export { Grid } from './layout/Grid.js';
+export type { GridOptions } from './layout/Grid.js';
+
 // ── Feedback Widgets ──────────────────────────────────
 export { ProgressBar } from './feedback/ProgressBar.js';
 export type { ProgressBarOptions } from './feedback/ProgressBar.js';
