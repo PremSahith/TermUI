@@ -59,3 +59,5 @@ export { Spinner, SPINNER_FRAMES } from './feedback/Spinner.js';
 export type { SpinnerOptions } from './feedback/Spinner.js';
 export { Scrollbar } from './feedback/Scrollbar.js';
 export type { ScrollbarOrientation, ScrollbarOptions } from './feedback/Scrollbar.js';
+export { Skeleton } from './feedback/Skeleton.js';
+export type { SkeletonOptions } from './feedback/Skeleton.js';
