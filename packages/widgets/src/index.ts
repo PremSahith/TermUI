@@ -20,6 +20,8 @@ export { DiffView } from './display/DiffView.js';
 export type { DiffLine, DiffViewOptions } from './display/DiffView.js';
 export { StreamingText } from './display/StreamingText.js';
 export type { StreamingTextOptions } from './display/StreamingText.js';
+export { ChatMessage } from './display/ChatMessage.js';
+export type { ChatMessageOptions, MessageRole } from './display/ChatMessage.js';
 
 // ── Input Widgets ─────────────────────────────────────
 export { List } from './input/List.js';
