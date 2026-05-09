@@ -15,3 +15,21 @@ export { tail } from './tail.js';
 export type { TailOptions, TailStream } from './tail.js';
 export { http } from './http.js';
 export type { HealthResult, Endpoint } from './http.js';
+
+// ── Reactive hooks ────────────────────────────────────
+export {
+    useCpu,
+    useMemory,
+    useDisk,
+    useNetwork,
+    useTopProcesses,
+    useSystemInfo,
+    useHttpHealth,
+} from './hooks.js';
+export type {
+    CpuMetrics,
+    MemoryMetrics,
+    DiskMetrics,
+    NetworkMetrics,
+    SystemInfo,
+} from './hooks.js';

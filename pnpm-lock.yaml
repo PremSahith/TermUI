@@ -161,6 +161,10 @@ importers:
         version: 5.9.3
 
   packages/data:
+    dependencies:
+      '@termuijs/jsx':
+        specifier: workspace:*
+        version: link:../jsx
     devDependencies:
       '@types/node':
         specifier: ^22.0.0

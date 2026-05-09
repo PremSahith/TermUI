@@ -16,7 +16,7 @@ export interface Endpoint {
 }
 
 const _latencyHistory = new Map<string, number[]>();
-const MAX_HISTORY = 60;
+const MAX_HISTORY = 100;
 const MAX_URLS = 100;
 
 /** HTTP data provider — uses native fetch (Node 18+) */

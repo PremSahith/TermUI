@@ -1,0 +1,214 @@
+// ─────────────────────────────────────────────────────
+// @termuijs/data — Reactive hooks for system metrics
+// ─────────────────────────────────────────────────────
+
+import { useState, useEffect, useInterval } from '@termuijs/jsx';
+import { cpu } from './cpu.js';
+import { memory } from './memory.js';
+import { disk } from './disk.js';
+import type { DiskPartition } from './disk.js';
+import { network } from './network.js';
+import type { NetworkInterface } from './network.js';
+import { processes } from './processes.js';
+import type { ProcessInfo } from './processes.js';
+import { system } from './system.js';
+import { http } from './http.js';
+import type { HealthResult, Endpoint } from './http.js';
+
+// ── CPU ──────────────────────────────────────────────
+
+export interface CpuMetrics {
+    percent: number;
+    perCore: number[];
+    loadAvg: number[];
+    model: string;
+    count: number;
+    speed: number;
+}
+
+function snapshotCpu(): CpuMetrics {
+    return {
+        percent: cpu.percent,
+        perCore: cpu.perCore,
+        loadAvg: cpu.loadAvg,
+        model: cpu.model,
+        count: cpu.count,
+        speed: cpu.speed,
+    };
+}
+
+/**
+ * useCpu — reactive CPU metrics updated every `intervalMs` milliseconds.
+ */
+export function useCpu(intervalMs = 1000): CpuMetrics {
+    const [metrics, setMetrics] = useState<CpuMetrics>(() => snapshotCpu());
+    useInterval(() => setMetrics(snapshotCpu()), intervalMs);
+    return metrics;
+}
+
+// ── Memory ───────────────────────────────────────────
+
+export interface MemoryMetrics {
+    percent: number;
+    used: string;
+    free: string;
+    total: string;
+    raw: { used: number; free: number; total: number };
+}
+
+function snapshotMemory(): MemoryMetrics {
+    return {
+        percent: memory.percent,
+        used: memory.used,
+        free: memory.free,
+        total: memory.total,
+        raw: memory.raw,
+    };
+}
+
+/**
+ * useMemory — reactive memory metrics updated every `intervalMs` milliseconds.
+ */
+export function useMemory(intervalMs = 1000): MemoryMetrics {
+    const [metrics, setMetrics] = useState<MemoryMetrics>(() => snapshotMemory());
+    useInterval(() => setMetrics(snapshotMemory()), intervalMs);
+    return metrics;
+}
+
+// ── Disk ─────────────────────────────────────────────
+
+export interface DiskMetrics {
+    percent: number;
+    partitions: DiskPartition[];
+    main: DiskPartition | null;
+}
+
+function snapshotDisk(): DiskMetrics {
+    return {
+        percent: disk.percent,
+        partitions: disk.partitions,
+        main: disk.main,
+    };
+}
+
+/**
+ * useDisk — reactive disk metrics updated every `intervalMs` milliseconds.
+ */
+export function useDisk(intervalMs = 5000): DiskMetrics {
+    const [metrics, setMetrics] = useState<DiskMetrics>(() => snapshotDisk());
+    useInterval(() => setMetrics(snapshotDisk()), intervalMs);
+    return metrics;
+}
+
+// ── Network ──────────────────────────────────────────
+
+export interface NetworkMetrics {
+    interfaces: NetworkInterface[];
+    ip: string;
+    hostname: string;
+}
+
+function snapshotNetwork(): NetworkMetrics {
+    return {
+        interfaces: network.interfaces,
+        ip: network.ip,
+        hostname: network.hostname,
+    };
+}
+
+/**
+ * useNetwork — reactive network interface info updated every `intervalMs` milliseconds.
+ */
+export function useNetwork(intervalMs = 5000): NetworkMetrics {
+    const [metrics, setMetrics] = useState<NetworkMetrics>(() => snapshotNetwork());
+    useInterval(() => setMetrics(snapshotNetwork()), intervalMs);
+    return metrics;
+}
+
+// ── Processes ────────────────────────────────────────
+
+/**
+ * useTopProcesses — reactive top-N process list sorted by CPU, updated every `intervalMs` ms.
+ */
+export function useTopProcesses(n = 10, intervalMs = 2000): ProcessInfo[] {
+    const [procs, setProcs] = useState<ProcessInfo[]>(() => processes.top(n));
+    useInterval(() => setProcs(processes.top(n)), intervalMs);
+    return procs;
+}
+
+// ── System Info ──────────────────────────────────────
+
+export interface SystemInfo {
+    platform: string;
+    release: string;
+    type: string;
+    hostname: string;
+    uptime: string;
+    uptimeSeconds: number;
+    user: string;
+    arch: string;
+    nodeVersion: string;
+}
+
+function snapshotSystem(): SystemInfo {
+    return {
+        platform: system.platform,
+        release: system.release,
+        type: system.type,
+        hostname: system.hostname,
+        uptime: system.uptime,
+        uptimeSeconds: system.uptimeSeconds,
+        user: system.user,
+        arch: system.arch,
+        nodeVersion: system.nodeVersion,
+    };
+}
+
+/**
+ * useSystemInfo — static system info snapshot (no polling; values are OS-level constants).
+ * Uptime is captured once at mount time.
+ */
+export function useSystemInfo(): SystemInfo {
+    const [info] = useState<SystemInfo>(() => snapshotSystem());
+    return info;
+}
+
+// ── HTTP Health ──────────────────────────────────────
+
+/**
+ * useHttpHealth — reactive HTTP health checks for a list of endpoints,
+ * updated every `intervalMs` milliseconds.
+ *
+ * @param endpoints - Array of { name, url } objects or plain URL strings.
+ * @param intervalMs - Poll interval in milliseconds (default 10 000).
+ */
+export function useHttpHealth(
+    endpoints: Array<Endpoint | string>,
+    intervalMs = 10_000,
+): HealthResult[] {
+    const normalised: Endpoint[] = endpoints.map(e =>
+        typeof e === 'string' ? { name: e, url: e } : e,
+    );
+
+    const [results, setResults] = useState<HealthResult[]>([]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const run = () => {
+            http.checkAll(normalised).then(r => {
+                if (!cancelled) setResults(r);
+            }).catch(() => { /* silently ignore network errors */ });
+        };
+
+        run(); // immediate first fetch
+
+        const id = setInterval(run, intervalMs);
+        return () => {
+            cancelled = true;
+            clearInterval(id);
+        };
+    }, [intervalMs, JSON.stringify(normalised)]);
+
+    return results;
+}
