@@ -78,8 +78,15 @@ export async function render(
         // Replace root's children
         rootBox.clearChildren();
         rootBox.addChild(newRoot);
+        rootBox.markDirty();
 
         rootWidget = newRoot;
+
+        // Invalidate front buffer so _flush() outputs ALL cells on next tick.
+        // Without this, the differential renderer skips cells that match the
+        // front buffer from the previous frame, leaving old tab content visible
+        // (overlay) when switching between tabs with different layouts.
+        appInstance.screen.invalidate();
 
         // Request a render cycle
         appInstance.requestRender();
