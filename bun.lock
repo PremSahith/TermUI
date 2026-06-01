@@ -13,6 +13,19 @@
         "vitest": "^2.1.0",
       },
     },
+    "examples/cli-wrapper-live": {
+      "name": "@termuijs/example-cli-wrapper-live",
+      "version": "0.1.0",
+      "dependencies": {
+        "@termuijs/core": "workspace:*",
+        "@termuijs/jsx": "workspace:*",
+        "@termuijs/ui": "workspace:*",
+        "@termuijs/widgets": "workspace:*",
+      },
+      "devDependencies": {
+        "typescript": "^5.4.0",
+      },
+    },
     "examples/dashboard": {
       "name": "@termuijs/example-dashboard",
       "version": "0.1.0",
@@ -244,6 +257,7 @@
         "@termuijs/widgets": "workspace:*",
       },
       "devDependencies": {
+        "@termuijs/testing": "workspace:*",
         "tsup": "^8.0.0",
         "typescript": "^5.4.0",
       },
@@ -377,6 +391,8 @@
     "@termuijs/data": ["@termuijs/data@workspace:packages/data"],
 
     "@termuijs/dev-server": ["@termuijs/dev-server@workspace:packages/dev-server"],
+
+    "@termuijs/example-cli-wrapper-live": ["@termuijs/example-cli-wrapper-live@workspace:examples/cli-wrapper-live"],
 
     "@termuijs/example-dashboard": ["@termuijs/example-dashboard@workspace:examples/dashboard"],
 
