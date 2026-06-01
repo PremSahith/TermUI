@@ -257,7 +257,6 @@
         "@termuijs/widgets": "workspace:*",
       },
       "devDependencies": {
-        "@termuijs/testing": "workspace:*",
         "tsup": "^8.0.0",
         "typescript": "^5.4.0",
       },
@@ -393,7 +392,6 @@
     "@termuijs/dev-server": ["@termuijs/dev-server@workspace:packages/dev-server"],
 
     "@termuijs/example-cli-wrapper-live": ["@termuijs/example-cli-wrapper-live@workspace:examples/cli-wrapper-live"],
-
     "@termuijs/example-dashboard": ["@termuijs/example-dashboard@workspace:examples/dashboard"],
 
     "@termuijs/example-forms": ["@termuijs/example-forms@workspace:examples/forms-and-validation"],
