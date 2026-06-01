@@ -134,34 +134,15 @@ export class ThemeEngine {
             const active = this._stylesheet.themes.find(t => t.name === this._activeTheme);
             if (active) Object.assign(this._variables, active.variables);
         }
-        // Resolve rules and flatten any nested rules
-        this._resolvedRules = [];
-
-        const processAstRule = (rule: TSSRule, parentSel: TSSSelector | null) => {
-            let combinedSel = rule.selector;
-            // TermUI's matching engine doesn't technically support descendant matching
-            // natively but we store the flattened selector for completeness.
-            // If we needed descendant matching, we would track parents in _matchesSelector,
-            // but for now, we just flatten the properties into the child selector directly
-            // or build a combined string representation if supported.
-            // Since TSSSelector is flat, we'll just use the child selector for matching,
-            // but in reality we should probably implement descendant logic.
-            // For now, following the exact engine pattern:
-            this._resolvedRules.push({
-                selector: rule.selector, // Ideally this would be a descendant selector
-                properties: this._resolveProperties(rule),
-            });
-
-            if (rule.nested) {
-                for (const child of rule.nested) {
-                    processAstRule(child, rule.selector);
-                }
-            }
-        };
-
-        for (const rule of this._stylesheet.rules) {
-            processAstRule(rule, null);
-        }
+        // Resolve top-level rules only.
+        // Nested rules (rule.nested) are supported by the parser and compile()
+        // but ThemeEngine's selector matching is flat and does not support
+        // descendant combinators. Nested rules are intentionally skipped here
+        // to avoid silently applying child selectors at the wrong scope.
+        this._resolvedRules = this._stylesheet.rules.map(rule => ({
+            selector: rule.selector,
+            properties: this._resolveProperties(rule),
+        }));
 
         // Notify listeners
         for (const fn of this._listeners) fn();
