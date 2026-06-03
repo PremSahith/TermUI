@@ -34,7 +34,7 @@ export class EmailInput extends Widget {
         style: Partial<Style> = {},
         opts: EmailInputOptions = {},
     ) {
-        super(mergeStyles(defaultStyle(), { border: 'single', height: 3 }, style));
+        super(mergeStyles(defaultStyle(), { border: 'single', height: 3, ...style }));
         this._placeholder = opts.placeholder ?? '';
         this._domains = opts.domains ?? ['gmail.com', 'outlook.com', 'yahoo.com'];
         this._onSubmit = opts.onSubmit;
