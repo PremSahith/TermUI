@@ -8,7 +8,7 @@
 // ─────────────────────────────────────────────────────
 
 import { Widget } from '@termuijs/widgets';
-import { type Style, type Color, type Screen, type KeyEvent, styleToCellAttrs, truncate } from '@termuijs/core';
+import { type Style, type Color, type Screen, type KeyEvent, styleToCellAttrs, truncate, mergeStyles, defaultStyle } from '@termuijs/core';
 
 export interface EmailInputOptions {
     placeholder?: string;
@@ -34,7 +34,7 @@ export class EmailInput extends Widget {
         style: Partial<Style> = {},
         opts: EmailInputOptions = {},
     ) {
-        super({ border: 'single', height: 3, ...style });
+        super(mergeStyles(defaultStyle(), { border: 'single', height: 3 }, style));
         this._placeholder = opts.placeholder ?? '';
         this._domains = opts.domains ?? ['gmail.com', 'outlook.com', 'yahoo.com'];
         this._onSubmit = opts.onSubmit;
